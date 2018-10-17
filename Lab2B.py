@@ -11,6 +11,8 @@ Purpose: Use linked lists to find duplicate passwords in a list
 
 from Node import Node
 import time
+import sys
+
 
 def merge(left_value, right_value, left_password, right_password):
   """
@@ -34,7 +36,6 @@ def merge(left_value, right_value, left_password, right_password):
   merged_list_passwords = []
   i = 0
   j = 0
-  k = 0
   while i < len(left_value) and j < len(right_value):
     if left_value[i] <= right_value[j]:
       merged_list_values.append(left_value[i])
@@ -57,7 +58,7 @@ def merge(left_value, right_value, left_password, right_password):
 
 def merge_sort_with_stacks(linked_list):
   """
-  Sorts a linked list using the merge sort algorithm with stack
+  Sorts a linked list using a reduced merge sort algorithm with stack
   implementation. In Python, lists have the same functionality
   as generic stacks so lists are used here.
   
@@ -66,18 +67,11 @@ def merge_sort_with_stacks(linked_list):
   
   Returns:
     sorted_password_list: A linked list of Node objects sorted based on
-						  count
+                          count
 
   """
   if linked_list == None:
     return None
-  helper = linked_list
-  unsorted_passwords = []
-  unsorted_values =  []
-  while helper != None:
-    unsorted_passwords.append(helper.password)
-    unsorted_values.append(helper.count)
-    helper = helper.next
   # Stacks for password counts
   stack1 = []
   stack2 = []
@@ -85,28 +79,31 @@ def merge_sort_with_stacks(linked_list):
   stack3 = []
   stack4 = []
   helper = linked_list
-  for i in range(len(unsorted_values)):
+  # This code skips the separation part of merge sort and directly
+  # creates a list of lists that each contain one password count
+  while helper != None:
     temp_value = []
-    temp_value.append(unsorted_values[i])
+    temp_value.append(helper.count)
     stack1.append(temp_value)
     temp_password = []
-    temp_password.append(unsorted_passwords[i])
+    temp_password.append(helper.password)
     stack3.append(temp_password)
+    helper = helper.next
   while len(stack1) > 1:
     while len(stack1) > 1:
-      right_value = stack1.pop()
       left_value = stack1.pop()
-      right_password = stack3.pop()
+      right_value = stack1.pop()
       left_password = stack3.pop()
+      right_password = stack3.pop()
       merged_values, merged_passwords = merge(left_value, right_value,
                                           left_password, right_password)
       stack2.append(merged_values)
       stack4.append(merged_passwords)
     while len(stack2) > 1:
-      right_value = stack2.pop()
       left_value = stack2.pop()
-      right_password = stack4.pop()
+      right_value = stack2.pop()
       left_password = stack4.pop()
+      right_password = stack4.pop()
       merged_values, merged_passwords = merge(left_value, right_value,
                                           left_password, right_password)
       stack1.append(merged_values)
@@ -124,6 +121,7 @@ def merge_sort_with_stacks(linked_list):
     sorted_password_list = Node(sorted_passwords[value], 
                           sorted_values[value], sorted_password_list)
   return sorted_password_list
+
 
 def length_linked_list(linked_list):
   """
@@ -145,6 +143,7 @@ def length_linked_list(linked_list):
     helper = helper.next
   return counter
 
+
 def bubble_sort(password_list):
   """
   Sorts a linked list using the bubble sort algorithm.
@@ -154,7 +153,7 @@ def bubble_sort(password_list):
   
   Returns:
     sorted_password_list: A linked list of Node objects sorted based on
-						  count
+                          count
 
   """
   helper = password_list
@@ -178,6 +177,7 @@ def bubble_sort(password_list):
     sorted_password_list = Node(unsorted_passwords[value], 
                         unsorted_values[value], sorted_password_list)
   return sorted_password_list
+
 
 def get_password_list_from_file(password_file):
   """
@@ -211,6 +211,7 @@ def get_password_list_from_file(password_file):
       password_list = Node(combination[1], 1, password_list)
   return password_list
 
+
 def get_password_dict_from_file(password_file):
   """
   Reads a password file and generates a dictionary
@@ -221,7 +222,7 @@ def get_password_dict_from_file(password_file):
                    passwords
   
   Returns:
-    password_dict: A dictionary with keys are passwords and values as
+    password_dict: A dictionary with keys as passwords and values as
                    that password's count
 
   """
@@ -236,6 +237,7 @@ def get_password_dict_from_file(password_file):
     else:
       password_dict[combination[1]] = 1
   return password_dict
+
 
 def create_list_from_dict(password_dict):
   """
@@ -253,6 +255,7 @@ def create_list_from_dict(password_dict):
   for key in password_dict:
     password_list = Node(key, password_dict[key], password_list)
   return password_list
+
 
 def read_from_file(filename):
   """
@@ -273,12 +276,12 @@ def main():
   # Possible sample files: sample1, sample2, sample3, sample 4, sample 5
   start_loop = time.time()
   password_list1 = get_password_list_from_file(
-                          read_from_file("sample5.txt"))
+                          read_from_file("sample1.txt"))
   print("It took " + str(time.time()-start_loop) + 
         " seconds to create the linked list using loops.")
   start_dict = time.time()
   password_dict = get_password_dict_from_file(
-                          read_from_file("sample5.txt"))
+                          read_from_file("sample1.txt"))
   password_list2 = create_list_from_dict(password_dict)
   print("It took " + str(time.time()-start_dict) + 
         " seconds to create the linked list using a dictionary.")
